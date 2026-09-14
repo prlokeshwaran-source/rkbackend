@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: rksolutions-backend
+    runtime: java
+    build:
+      buildCommand: mvnw -B clean package -DskipTests
+      dockerContext: .
+    runCommand: java -jar target/rksolutions-1.0.0.jar
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+    disk:
+      name: rksolutions-data
+      mountPath: /data
+      sizeGB: 1
