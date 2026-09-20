@@ -47,8 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_URIS).permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/users/approve").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/users/reject").permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/super-admin/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/api/v1/admin/").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/super-admin/").hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());
 
