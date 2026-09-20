@@ -35,8 +35,7 @@ public class UserRequest {
     @Enumerated(EnumType.STRING)
     private RoleName role;
 
-    private Long managerId;
-
+    
     private String profileImage;
 
     @Enumerated(EnumType.STRING)

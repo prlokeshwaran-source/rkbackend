@@ -29,10 +29,6 @@ public class UserMapper {
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
 
-        if (user.getManager() != null) {
-            response.setManagerId(user.getManager().getId());
-        }
-
         if (user.getRoles() != null) {
             Set<RoleName> roleNames = user.getRoles().stream()
                     .map(Role::getName)
@@ -66,10 +62,6 @@ public class UserMapper {
             user.setStatus(request.getStatus());
         }
 
-        if (request.getManagerId() != null) {
-            user.setManager(new User());
-            user.getManager().setId(request.getManagerId());
-        }
 
         return user;
     }
@@ -87,9 +79,6 @@ public class UserMapper {
         if (request.getProfileImage() != null) {
             user.setProfileImage(request.getProfileImage());
         }
-        if (request.getManagerId() != null) {
-            user.setManager(new User());
-            user.getManager().setId(request.getManagerId());
-        }
+        
     }
 }

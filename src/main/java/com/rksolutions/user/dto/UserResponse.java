@@ -20,7 +20,7 @@ public class UserResponse {
     private String email;
     private Set<RoleName> roles;
     private UserStatus status;
-    private Long managerId;
+   
     private String profileImage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

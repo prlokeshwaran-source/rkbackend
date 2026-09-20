@@ -292,11 +292,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("Default role not found"));
         user.setRoles(Set.of(role));
 
-        if (request.getManagerId() != null) {
-            User manager = userRepository.findById(request.getManagerId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Manager not found with id: " + request.getManagerId()));
-            user.setManager(manager);
-        }
+       
 
         User savedUser = userRepository.save(user);
 
