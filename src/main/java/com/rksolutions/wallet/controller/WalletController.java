@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,31 +22,24 @@ public class WalletController {
     private WalletService walletService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<WalletResponse>> getWallet(Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        WalletResponse response = walletService.getWalletByUserId(userDetails.getId());
+    public ResponseEntity<ApiResponse<WalletResponse>> getWallet(@RequestParam Long userId) {
+        WalletResponse response = walletService.getWalletByUserId(userId);
         return ResponseEntity.ok(ApiResponse.success(response, "Wallet retrieved successfully"));
     }
 
     @GetMapping("/balance")
-    public ResponseEntity<ApiResponse<BalanceResponse>> getBalance(Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        BalanceResponse response = walletService.getBalance(userDetails.getId());
+    public ResponseEntity<ApiResponse<BalanceResponse>> getBalance(@RequestParam Long userId) {
+        BalanceResponse response = walletService.getBalance(userId);
         return ResponseEntity.ok(ApiResponse.success(response, "Balance retrieved successfully"));
     }
 
     @GetMapping("/transactions")
     public ResponseEntity<ApiResponse<Page<WalletTransactionResponse>>> getTransactions(
-            Authentication authentication,
+            @RequestParam Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir) {
-
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
 
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
@@ -55,7 +47,7 @@ public class WalletController {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<WalletTransactionResponse> transactions =
-                walletService.getTransactions(userDetails.getId(), pageable);
+                walletService.getTransactions(userId, pageable);
 
         return ResponseEntity.ok(ApiResponse.success(transactions, "Transactions retrieved successfully"));
     }

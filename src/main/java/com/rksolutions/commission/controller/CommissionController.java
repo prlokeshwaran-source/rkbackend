@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,10 +57,8 @@ public class CommissionController {
     @GetMapping("/my-commissions")
     @PreAuthorize("hasRole('USER') or hasRole('MANAGER')")
     public ResponseEntity<ApiResponse<List<CommissionResponse>>> getMyCommissions(
-            Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        List<CommissionResponse> commissions = commissionService.getCommissionsByUser(userDetails.getId());
+            @RequestParam Long userId) {
+        List<CommissionResponse> commissions = commissionService.getCommissionsByUser(userId);
         return ResponseEntity.ok(ApiResponse.success(commissions, "Your commissions retrieved successfully"));
     }
 
@@ -74,11 +71,8 @@ public class CommissionController {
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<CommissionResponse>> approveCommission(
-            @PathVariable Long id,
-            Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        CommissionResponse response = commissionService.approveCommission(id, userDetails.getId());
+            @PathVariable Long id, @RequestParam Long approvedById) {
+        CommissionResponse response = commissionService.approveCommission(id, approvedById);
         return ResponseEntity.ok(ApiResponse.success(response, "Commission approved successfully"));
     }
 
@@ -87,10 +81,8 @@ public class CommissionController {
     public ResponseEntity<ApiResponse<CommissionResponse>> rejectCommission(
             @PathVariable Long id,
             @Valid @RequestBody CommissionStatusRequest request,
-            Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        CommissionResponse response = commissionService.rejectCommission(id, request, userDetails.getId());
+            @RequestParam Long approvedById) {
+        CommissionResponse response = commissionService.rejectCommission(id, request, approvedById);
         return ResponseEntity.ok(ApiResponse.success(response, "Commission rejected successfully"));
     }
 }

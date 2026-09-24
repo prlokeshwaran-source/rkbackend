@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,19 +41,15 @@ public class FollowUpController {
 
     @GetMapping("/today")
     public ResponseEntity<ApiResponse<List<FollowUpResponse>>> getTodayFollowUps(
-            Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        List<FollowUpResponse> followUps = followUpService.getTodayFollowUps(userDetails.getId());
+            @RequestParam Long userId) {
+        List<FollowUpResponse> followUps = followUpService.getTodayFollowUps(userId);
         return ResponseEntity.ok(ApiResponse.success(followUps, "Today's follow-ups retrieved successfully"));
     }
 
     @GetMapping("/upcoming")
     public ResponseEntity<ApiResponse<List<FollowUpResponse>>> getUpcomingFollowUps(
-            Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        List<FollowUpResponse> followUps = followUpService.getUpcomingFollowUps(userDetails.getId());
+            @RequestParam Long userId) {
+        List<FollowUpResponse> followUps = followUpService.getUpcomingFollowUps(userId);
         return ResponseEntity.ok(ApiResponse.success(followUps, "Upcoming follow-ups retrieved successfully"));
     }
 

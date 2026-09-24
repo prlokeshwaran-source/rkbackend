@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,32 +25,25 @@ public class NotificationController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<NotificationResponse>>> getUserNotifications(
-            Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        List<NotificationResponse> notifications = notificationService.getUserNotifications(userDetails.getId());
+            @RequestParam Long userId) {
+        List<NotificationResponse> notifications = notificationService.getUserNotifications(userId);
         return ResponseEntity.ok(ApiResponse.success(notifications, "Notifications retrieved successfully"));
     }
 
     @GetMapping("/unread-count")
-    public ResponseEntity<ApiResponse<Long>> getUnreadCount(Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        long count = notificationService.getUnreadCount(userDetails.getId());
+    public ResponseEntity<ApiResponse<Long>> getUnreadCount(@RequestParam Long userId) {
+        long count = notificationService.getUnreadCount(userId);
         return ResponseEntity.ok(ApiResponse.success(count, "Unread count retrieved successfully"));
     }
 
     @GetMapping("/paginated")
     public ResponseEntity<ApiResponse<Page<NotificationResponse>>> getNotificationsPaginated(
-            Authentication authentication,
+            @RequestParam Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<NotificationResponse> notifications =
-                notificationService.getUserNotificationsPaginated(userDetails.getId(), pageable);
+                notificationService.getUserNotificationsPaginated(userId, pageable);
         return ResponseEntity.ok(ApiResponse.success(notifications, "Notifications retrieved successfully"));
     }
 
@@ -62,10 +54,8 @@ public class NotificationController {
     }
 
     @PatchMapping("/read-all")
-    public ResponseEntity<ApiResponse<Void>> markAllAsRead(Authentication authentication) {
-        com.rksolutions.auth.security.CustomUserDetails userDetails =
-                (com.rksolutions.auth.security.CustomUserDetails) authentication.getPrincipal();
-        notificationService.markAllAsRead(userDetails.getId());
+    public ResponseEntity<ApiResponse<Void>> markAllAsRead(@RequestParam Long userId) {
+        notificationService.markAllAsRead(userId);
         return ResponseEntity.ok(ApiResponse.success(null, "All notifications marked as read"));
     }
 
