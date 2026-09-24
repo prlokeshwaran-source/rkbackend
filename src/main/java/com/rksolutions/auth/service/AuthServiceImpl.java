@@ -185,7 +185,8 @@ public class AuthServiceImpl implements AuthService {
                 }
                 newUser.setName(request.getName());
                 newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-                newUser.setStatus(UserStatus.PENDING);
+                newUser.setStatus(UserStatus.ACTIVE);
+                newUser.setIsApprovedByManager(true);
 
                 Role role = roleRepository.findByName(entry.roleName)
                         .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + entry.roleName));
@@ -193,12 +194,11 @@ public class AuthServiceImpl implements AuthService {
 
                 User savedUser = userRepository.save(newUser);
 
-                LoginResponse response = new LoginResponse();
-                response.setName(savedUser.getName());
-                response.setEmail(savedUser.getEmail());
-                response.setPhone(savedUser.getPhone());
-                response.setRole(entry.roleName.name());
-                response.setMessage("Registration successful. Please wait for admin approval.");
+                CustomUserDetails userDetails = CustomUserDetails.fromUser(savedUser);
+                String accessToken = jwtService.generateAccessToken(userDetails);
+                String refreshToken = jwtService.generateRefreshToken(userDetails);
+                LoginResponse response = toLoginResponse(savedUser, accessToken, refreshToken);
+                response.setMessage("Registration successful.");
                 return response;
             }
         }
@@ -286,7 +286,8 @@ public class AuthServiceImpl implements AuthService {
         user.setPhone(request.getPhone());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setStatus(UserStatus.PENDING);
+        user.setStatus(UserStatus.ACTIVE);
+        user.setIsApprovedByManager(true);
 
         Role role = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new ResourceNotFoundException("Default role not found"));
@@ -303,7 +304,7 @@ public class AuthServiceImpl implements AuthService {
         response.setPhone(savedUser.getPhone());
         response.setRole("ROLE_USER");
         response.setStatus(savedUser.getStatus());
-        response.setMessage("Registration successful. Please wait for admin approval.");
+        response.setMessage("Registration successful.");
         return response;
     }
 }

@@ -64,6 +64,6 @@ public class AuthController {
     public ResponseEntity<ApiResponse<UserRegisterResponse>> register(
             @Valid @RequestBody RegisterRequest request) {
         UserRegisterResponse response = authService.register(request);
-        return ResponseEntity.ok(ApiResponse.created(response, "Registration successful. Please wait for admin approval."));
+        return ResponseEntity.ok(ApiResponse.created(response, "Registration successful."));
     }
 }
