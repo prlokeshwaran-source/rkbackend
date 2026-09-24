@@ -29,8 +29,11 @@ public class SecurityConfig {
             "/api/v1/auth/**",
             "/v3/api-docs/**",
             "/v3/api-docs*",
+            "/v2/api-docs/**",
+            "/v3/api-docs",
             "/swagger-ui.html",
             "/swagger-ui/**",
+            "/swagger-ui",
             "/swagger-resources/**",
             "/webjars/**",
             "/"
@@ -45,8 +48,8 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_URIS).permitAll()
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/users/approve").permitAll()
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/users/reject").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/users/**/approve").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/users/**/reject").permitAll()
                         .requestMatchers("/api/v1/admin/").hasRole("ADMIN")
                         .requestMatchers("/api/v1/super-admin/").hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated())
