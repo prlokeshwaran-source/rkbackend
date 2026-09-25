@@ -16,7 +16,9 @@ services:
         value: ""
       - key: MAIL_PASSWORD
         value: ""
-    disk:
-      name: rksolutions-data
-      mountPath: /data
-      sizeGB: 1
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false

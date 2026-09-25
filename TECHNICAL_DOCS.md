@@ -11,19 +11,18 @@
   - `spring-boot-starter-web`: REST API foundation (Spring MVC, Tomcat)
   - `spring-boot-starter-data-jpa`: ORM via JPA/Hibernate
   - `spring-boot-starter-security`: Authentication, authorization, password encoding
-  - `mysql-connector-j` → **replaced with H2**: In-memory/file database
+  - `postgresql`: PostgreSQL JDBC driver used by all JPA modules
   - `lombok`: Reduces boilerplate (getters, setters, constructors)
   - `jjwt-api/impl/jwt-jackson`: JWT token generation and validation (v0.12.6)
   - `spring-boot-starter-validation`: Bean validation (JSR-380 annotations)
   - `springdoc-openapi-starter-webmvc-ui`: Auto-generated Swagger/OpenAPI 3 docs
   - `spring-boot-devtools`: Live reload during development
-  - `h2`: Database for dev and prod (file-based on Render)
+  - PostgreSQL is configured for local and production environments
 
 ### application.properties
-- `spring.datasource.url=jdbc:h2:mem:rksolutions_db`: In-memory H2 for local dev
+- `spring.datasource.url=${DATABASE_URL:jdbc:postgresql://localhost:5432/rksolutions}`: PostgreSQL URL (set `DATABASE_URL`, `DATABASE_USERNAME`, and `DATABASE_PASSWORD` for your environment)
 - `spring.jpa.hibernate.ddl-auto=update`: Auto-creates/updates tables from entities
-- `spring.jpa.properties.hibernate.dialect=H2Dialect`: H2-specific SQL dialect
-- `spring.h2.console.enabled=true`: Web console accessible at `/h2-console`
+- `spring.jpa.properties.hibernate.dialect=PostgreSQLDialect`: PostgreSQL SQL dialect
 - `app.jwt.secret`: 256-bit secret key for HS512 JWT signing
 - `app.jwt.expiration-ms=86400000`: Access token valid for 24 hours
 - `app.jwt.refresh-expiration-ms=604800000`: Refresh token valid for 7 days
@@ -31,8 +30,7 @@
 - `springdoc.swagger-ui.path=/swagger-ui.html`: Swagger UI HTML interface
 
 ### application-prod.properties (Render deployment)
-- `spring.datasource.url=jdbc:h2:file:/data/rksolutions_db`: File-based H2 on Render disk
-- `spring.h2.console.enabled=false`: Security - disable console in production
+- PostgreSQL credentials are read from the `DATABASE_URL`, `DATABASE_USERNAME`, and `DATABASE_PASSWORD` Render environment variables
 - `app.jwt.secret=${JWT_SECRET:...}`: Uses Render environment variable with fallback
 - `spring.mail.username=${MAIL_USERNAME:}`: Uses Render environment variables for email
 
